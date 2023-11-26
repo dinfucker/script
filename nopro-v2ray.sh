@@ -10,7 +10,7 @@ sudo apt install nginx
 cd /etc/nginx/conf.d
 
 # ถามเพื่อกำหนด server_name
-read -p "Enter your desired server_name (e.g., example.com): " server_name
+read -p "ใส่ hotsname (xxx.com): " server_name
 
 # สร้างหรือแก้ไขไฟล์ v2ray.conf
 sudo tee v2ray.conf > /dev/null << EOL
@@ -58,16 +58,16 @@ sudo bash install-release.sh
 # เข้าไปที่ไดเร็กทอรีการกำหนดค่า V2Ray
 cd /usr/local/etc/v2ray
 
-# ถามเพื่อกำหนด server_name
-read -p "Enter your desired server_name (e.g., example.com): " server_name
-
 # สร้างหรือแก้ไขไฟล์ config.json
-sudo tee config.json > /dev/null << EOL
+sudo nano config.json
+
+# เพิ่มการกำหนดค่าต่อไปนี้ใน config.json
+
 {
   "inbounds": [
     {
       "port": 11112,
-      "listen": "127.0.0.1",
+      "listen":"127.0.0.1",
       "protocol": "vmess",
       "settings": {
         "clients": [
@@ -80,7 +80,7 @@ sudo tee config.json > /dev/null << EOL
       "streamSettings": {
         "network": "ws",
         "wsSettings": {
-          "path": "/ray"
+        "path": "/ray"
         }
       }
     }
@@ -90,3 +90,26 @@ sudo tee config.json > /dev/null << EOL
       "protocol": "freedom",
       "settings": {}
     }
+  ]
+}
+
+# เข้ากลับไปที่ไดเร็กทอรีหลัก
+cd
+
+# เปิดใช้บริการ V2Ray
+sudo systemctl enable v2ray
+
+# ตรวจสอบสถานะบริการ V2Ray
+sudo systemctl status v2ray
+
+# เริ่มให้บริการ V2Ray
+sudo systemctl start v2ray
+
+# ตรวจสอบสถานะบริการ V2Ray อีกครั้ง
+sudo systemctl status v2ray
+
+# รีสตาร์ท Nginx
+sudo service nginx restart
+
+# ตรวจสอบสถานะ Nginx
+sudo service nginx status
