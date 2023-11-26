@@ -9,14 +9,11 @@ sudo apt install nginx
 # เข้าไปที่ไดเร็กทอรีการกำหนดค่า Nginx
 cd /etc/nginx/conf.d
 
-# สร้างหรือแก้ไขไฟล์ v2ray.conf
-sudo nano v2ray.conf
-
 # ถามเพื่อกำหนด server_name
 read -p "Enter your desired server_name (e.g., example.com): " server_name
 
-# เพิ่มการกำหนดค่าต่อไปนี้ใน v2ray.conf
-echo "
+# สร้างหรือแก้ไขไฟล์ v2ray.conf
+sudo tee v2ray.conf > /dev/null << EOL
 server {
   listen 80;
   server_name $server_name;
@@ -27,22 +24,21 @@ server {
   access_log /var/log/nginx/v2ray.access;
   error_log /var/log/nginx/v2ray.error;
 
-    location /ray { # Consistent with the path of V2Ray configuration
-      if (\$http_upgrade != \"websocket\") { # Return 404 error when WebSocket upgrading negotiate failed
-          return 404;
-      }
-      proxy_redirect off;
-      proxy_pass http://127.0.0.1:11112;
-      proxy_http_version 1.1;
-      proxy_set_header Upgrade \$http_upgrade;
-      proxy_set_header Connection \"upgrade\";
-      proxy_set_header Host \$host;
-      # Show real IP in v2ray access.log
-      proxy_set_header X-Real-IP \$remote_addr;
-      proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+  location /ray {
+    if (\$http_upgrade != "websocket") {
+      return 404;
     }
+    proxy_redirect off;
+    proxy_pass http://127.0.0.1:11112;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade \$http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Host \$host;
+    proxy_set_header X-Real-IP \$remote_addr;
+    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+  }
 }
-" | sudo tee -a v2ray.conf
+EOL
 
 # เข้ากลับไปที่ไดเร็กทอรีหลัก
 cd
@@ -62,62 +58,35 @@ sudo bash install-release.sh
 # เข้าไปที่ไดเร็กทอรีการกำหนดค่า V2Ray
 cd /usr/local/etc/v2ray
 
-# สร้างหรือแก้ไขไฟล์ config.json
-sudo nano config.json
-
 # ถามเพื่อกำหนด server_name
 read -p "Enter your desired server_name (e.g., example.com): " server_name
 
-# เพิ่มการกำหนดค่าต่อไปนี้ใน config.json
-echo "
+# สร้างหรือแก้ไขไฟล์ config.json
+sudo tee config.json > /dev/null << EOL
 {
-  \"inbounds\": [
+  "inbounds": [
     {
-      \"port\": 11112,
-      \"listen\":\"127.0.0.1\",
-      \"protocol\": \"vmess\",
-      \"settings\": {
-        \"clients\": [
+      "port": 11112,
+      "listen": "127.0.0.1",
+      "protocol": "vmess",
+      "settings": {
+        "clients": [
           {
-            \"id\": \"fc82b95e-7ea1-4e55-b2b4-e431056aa94a\",
-            \"alterId\": 0
+            "id": "fc82b95e-7ea1-4e55-b2b4-e431056aa94a",
+            "alterId": 0
           }
         ]
       },
-      \"streamSettings\": {
-        \"network\": \"ws\",
-        \"wsSettings\": {
-        \"path\": \"/ray\"
+      "streamSettings": {
+        "network": "ws",
+        "wsSettings": {
+          "path": "/ray"
         }
       }
     }
   ],
-  \"outbounds\": [
+  "outbounds": [
     {
-      \"protocol\": \"freedom\",
-      \"settings\": {}
+      "protocol": "freedom",
+      "settings": {}
     }
-  ]
-}
-" | sudo tee -a config.json
-
-# เข้ากลับไปที่ไดเร็กทอรีหลัก
-cd
-
-# เปิดใช้บริการ V2Ray
-sudo systemctl enable v2ray
-
-# ตรวจสอบสถานะบริการ V2Ray
-sudo systemctl status v2ray
-
-# เริ่มให้บริการ V2Ray
-sudo systemctl start v2ray
-
-# ตรวจสอบสถานะบริการ V2Ray อีกครั้ง
-sudo systemctl status v2ray
-
-# รีสตาร์ท Nginx
-sudo service nginx restart
-
-# ตรวจสอบสถานะ Nginx
-sudo service nginx status
