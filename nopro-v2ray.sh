@@ -10,7 +10,7 @@ sudo apt install nginx
 cd /etc/nginx/conf.d
 
 # ถามเพื่อกำหนด server_name
-read -p "ใส่ hotsname (xxx.com): " server_name
+read -p "ใส่ชื่อ โฮสเนมเราเช่น (xxx.com): " server_name
 
 # สร้างหรือแก้ไขไฟล์ v2ray.conf
 sudo tee v2ray.conf > /dev/null << EOL
@@ -59,15 +59,12 @@ sudo bash install-release.sh
 cd /usr/local/etc/v2ray
 
 # สร้างหรือแก้ไขไฟล์ config.json
-sudo nano config.json
-
-# เพิ่มการกำหนดค่าต่อไปนี้ใน config.json
-
+sudo tee config.json > /dev/null << EOL
 {
   "inbounds": [
     {
       "port": 11112,
-      "listen":"127.0.0.1",
+      "listen": "127.0.0.1",
       "protocol": "vmess",
       "settings": {
         "clients": [
@@ -80,7 +77,7 @@ sudo nano config.json
       "streamSettings": {
         "network": "ws",
         "wsSettings": {
-        "path": "/ray"
+          "path": "/ray"
         }
       }
     }
@@ -92,6 +89,7 @@ sudo nano config.json
     }
   ]
 }
+EOL
 
 # เข้ากลับไปที่ไดเร็กทอรีหลัก
 cd
