@@ -117,6 +117,6 @@ sudo service v2ray restart
 
 # แสดงข้อมูลหลังจากการติดตั้งเสร็จสิ้น
 echo "บริการ V2Ray ได้รับการติดตั้งเรียบร้อยแล้ว"
-echo "server_name: $server_name"
-echo "listen: $nginx_port"
+echo "โฮสเนม ของคุณคือ: $server_name"
+echo "Port ของคุณคือ: $nginx_port"
 echo "ID ของคุณคือ: $new_uuid"
