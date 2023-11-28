@@ -16,8 +16,8 @@ cd /etc/nginx/conf.d
 # ถามเพื่อกำหนด server_name
 read -p "ใส่ชื่อ โฮสเนมเราเช่น (xxx.com): " server_name
 
-# สร้างหรือแก้ไขไฟล์ v2ray.conf
-sudo tee v2ray.conf > /dev/null << EOL
+# สร้างหรือแก้ไขไฟล์ v2ray.conf ในไดเร็กทอรี /etc/nginx/conf.d/
+sudo tee /etc/nginx/conf.d/v2ray.conf > /dev/null << EOL
 server {
   listen 80;
   server_name $server_name;
@@ -59,6 +59,12 @@ curl -O https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/install
 # รันสคริปต์ติดตั้ง V2Ray
 sudo bash install-release.sh
 
+# เริ่มให้บริการ V2Ray
+sudo systemctl start v2ray
+
+# เปิดใช้บริการ V2Ray
+sudo systemctl enable v2ray
+
 # เข้าไปที่ไดเร็กทอรีการกำหนดค่า V2Ray
 cd /usr/local/etc/v2ray
 
@@ -98,11 +104,8 @@ EOL
 # เข้ากลับไปที่ไดเร็กทอรีหลัก
 cd
 
-# เปิดใช้บริการ V2Ray
-sudo systemctl enable v2ray
-
-# เริ่มให้บริการ V2Ray
-sudo systemctl start v2ray
-
 # รีสตาร์ท Nginx
 sudo service nginx restart
+
+# รีสตาร์ท v2ray
+sudo service v2ray restart
