@@ -68,7 +68,10 @@ sudo systemctl enable v2ray
 # เข้าไปที่ไดเร็กทอรีการกำหนดค่า V2Ray
 cd /usr/local/etc/v2ray
 
-# สร้างหรือแก้ไขไฟล์ config.json
+# สร้าง UUID ใหม่
+new_uuid=$(uuidgen)
+
+# สร้างหรือแก้ไขไฟล์ config.json ด้วย UUID ใหม่
 sudo tee config.json > /dev/null << EOL
 {
   "inbounds": [
@@ -79,7 +82,7 @@ sudo tee config.json > /dev/null << EOL
       "settings": {
         "clients": [
           {
-            "id": "fc82b95e-7ea1-4e55-b2b4-e431056aa94a",
+            "id": "$new_uuid",
             "alterId": 0
           }
         ]
