@@ -13,13 +13,15 @@ sudo systemctl enable nginx
 # เข้าไปที่ไดเร็กทอรีการกำหนดค่า Nginx
 cd /etc/nginx/conf.d
 
-# ถามเพื่อกำหนด server_name
+# ถามเพื่อกำหนด server_name และ port
 read -p "ใส่ชื่อ โฮสเนมเราเช่น (xxx.com): " server_name
+read -p "ใส่พอร์ตที่ต้องการให้ Nginx listen (default: 80): " nginx_port
+nginx_port=${nginx_port:-80}
 
 # สร้างหรือแก้ไขไฟล์ v2ray.conf ในไดเร็กทอรี /etc/nginx/conf.d/
 sudo tee /etc/nginx/conf.d/v2ray.conf > /dev/null << EOL
 server {
-  listen 80;
+  listen $nginx_port;
   server_name $server_name;
 
   index index.html;
