@@ -1,10 +1,14 @@
 #!/bin/bash
 
-# อัพเดตรายการแพ็คเกจ
-sudo apt-get update
-
 # ติดตั้ง Nginx
-sudo apt install nginx
+sudo apt update
+sudo apt install -y nginx
+
+# เริ่มบริการ Nginx
+sudo systemctl start nginx
+
+# ตั้งให้ Nginx เริ่มต้นทำงานทุกครั้งที่เปิดเครื่อง
+sudo systemctl enable nginx
 
 # เข้าไปที่ไดเร็กทอรีการกำหนดค่า Nginx
 cd /etc/nginx/conf.d
@@ -97,17 +101,8 @@ cd
 # เปิดใช้บริการ V2Ray
 sudo systemctl enable v2ray
 
-# ตรวจสอบสถานะบริการ V2Ray
-sudo systemctl status v2ray
-
 # เริ่มให้บริการ V2Ray
 sudo systemctl start v2ray
 
-# ตรวจสอบสถานะบริการ V2Ray อีกครั้ง
-sudo systemctl status v2ray
-
 # รีสตาร์ท Nginx
 sudo service nginx restart
-
-# ตรวจสอบสถานะ Nginx
-sudo service nginx status
