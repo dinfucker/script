@@ -70,11 +70,11 @@ sudo systemctl enable v2ray
 # เข้าไปที่ไดเร็กทอรีการกำหนดค่า V2Ray
 cd /usr/local/etc/v2ray
 
-# ใส่จำนวน UUID ที่ต้องการสร้าง
-read -p "ใส่จำนวน UUID ที่ต้องการสร้าง: " num_uuid
+# สร้าง UUID ใหม่
+new_uuid=$(uuidgen)
 
-# สร้างหรือแก้ไขไฟล์ config.json ด้วย UUID ทั้งหมด
-sudo tee /usr/local/etc/v2ray/config.json > /dev/null << EOL
+# สร้างหรือแก้ไขไฟล์ config.json ด้วย UUID ใหม่
+sudo tee config.json > /dev/null << EOL
 {
   "inbounds": [
     {
@@ -83,23 +83,28 @@ sudo tee /usr/local/etc/v2ray/config.json > /dev/null << EOL
       "protocol": "vmess",
       "settings": {
         "clients": [
+          {
+            "id": "$new_uuid",
+            "alterId": 0
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "wsSettings": {
+          "path": "/ray"
+        }
+      }
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "freedom",
+      "settings": {}
+    }
+  ]
+}
 EOL
-
-for ((i=1; i<=$num_uuid; i++)); do
-  new_uuid=$(uuidgen)
-  echo "          {\"id\": \"$new_uuid\", \"alterId\": 0}," >> /usr/local/etc/v2ray/config.json
-done
-
-echo "        ]" >> /usr/local/etc/v2ray/config.json
-echo "      }," >> /usr/local/etc/v2ray/config.json
-echo "      \"streamSettings\": {" >> /usr/local/etc/v2ray/config.json
-echo "        \"network\": \"ws\"," >> /usr/local/etc/v2ray/config.json
-echo "        \"wsSettings\": {" >> /usr/local/etc/v2ray/config.json
-echo "          \"path\": \"/ray\"" >> /usr/local/etc/v2ray/config.json
-echo "        }" >> /usr/local/etc/v2ray/config.json
-echo "      }" >> /usr/local/etc/v2ray/config.json
-echo "    }" >> /usr/local/etc/v2ray/config.json
-echo "  ]," >> /usr/local/etc/v2ray/config.json
 
 # เข้ากลับไปที่ไดเร็กทอรีหลัก
 cd
